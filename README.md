@@ -1,2 +1,22 @@
 # log4j2-migrator
-Script to migrate log4j configurations to log4j2
+Script to migrate log4j configurations to log4j2.
+
+The objective is to migrate a log4j.properties to log4j2.xml configuration for simple use cases. For more complex uses you'll need to translate part or all the configuration manually.
+
+The script doesn't have any error checking whatsoever. The input should be valid and correct.
+
+## Usage
+groovy log4jmigrator.grovvy pathname-to-log4j.properties
+
+## Example
+
+```
+groovy log4jmigrator.groovy test/log4j.properties > log4j2.xml
+
+```
+
+## Limitations
+* Can't translate multiple appenders for a logger
+* Only knows about ConsoleAppenders and DailyRollingFileAppender (simple configuration) appenders 
+* Doesn't generate Async loggers
+* Doesn't understand log4j.xml as input
