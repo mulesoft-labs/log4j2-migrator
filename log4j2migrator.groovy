@@ -77,7 +77,9 @@ def generate(bindings) {
 	 		    <gsp:scriptlet>}</gsp:scriptlet>
 			</Appenders>
 			<Loggers>
-				<Logger name="org.apache.log4j.xml" level="info"/>
+				 <gsp:scriptlet>loggers.each { name, value -> </gsp:scriptlet>
+					<Logger name="${name.trim()}" level="${value.trim()}"/>
+	 		    <gsp:scriptlet>}</gsp:scriptlet>
 				<Root level="${rootLevel}">
 					<AppenderRef ref="${rootAppender}"/>
 				</Root>
