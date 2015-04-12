@@ -86,10 +86,10 @@ def generate(bindings) {
             }
             'Loggers' {
                 bindings['loggers'].each { name, value ->
-                    Logger(name:name, level:value.trim())
+                    'AsyncLogger' (name:name, level:value.trim())
                 }
             }
-            'Root' (level:bindings['rootLevel']) {
+            'AsyncRoot' (level:bindings['rootLevel']) {
                 AppenderRef (ref:bindings['rootAppender'].trim())
             }
         }
