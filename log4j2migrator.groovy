@@ -10,7 +10,7 @@ propertiesFile.withInputStream {
 def bindings = parse(properties)
 //println "Bindings = ${bindings}"
 
-generate(bindings)
+println generate(bindings)
 
 
 def parse(properties) {
@@ -55,37 +55,33 @@ def parse(properties) {
 }
 
 def generate(bindings) {
+    def xmlWriter = new StringWriter() 
+    def xmlMarkup = new groovy.xml.MarkupBuilder(xmlWriter)
+    xmlMarkup
+        .'Configuration' {
+            'Appenders' {
+                bindings['appenders'].each { name, values -> 
 
-	def engine = new groovy.text.XmlTemplateEngine()
-	def text = '''\
-	    <Configuration xmlns:gsp='http://groovy.codehaus.org/2005/gsp'>
-	 		<Appenders>
-	 		    <gsp:scriptlet>appenders.each { name, values -> </gsp:scriptlet>
-	 		    	<gsp:scriptlet>def pattern=values['pattern']</gsp:scriptlet>
-	 		    	<gsp:scriptlet>if (values['type']=='Console') { </gsp:scriptlet>
-						<Console name="${name}" target="SYSTEM_OUT">
-							<PatternLayout pattern="${pattern}"/>
-						</Console>
-				    <gsp:scriptlet>}</gsp:scriptlet>
-	 		    	<gsp:scriptlet>if (values['type']=='RollingFile') { </gsp:scriptlet>
-	 		    		<gsp:scriptlet>def fileName=values['File']</gsp:scriptlet>
-	 		    		<gsp:scriptlet>def filePattern=values['DatePattern']</gsp:scriptlet>
-						<RollingFile name="${name}" fileName="${fileName}" filePattern="${filePattern}">
-							<PatternLayout pattern="${pattern}"/>
-						</RollingFile>
-				    <gsp:scriptlet>}</gsp:scriptlet>
-	 		    <gsp:scriptlet>}</gsp:scriptlet>
-			</Appenders>
-			<Loggers>
-				 <gsp:scriptlet>loggers.each { name, value -> </gsp:scriptlet>
-					<Logger name="${name.trim()}" level="${value.trim()}"/>
-	 		    <gsp:scriptlet>}</gsp:scriptlet>
-				<Root level="${rootLevel}">
-					<AppenderRef ref="${rootAppender}"/>
-				</Root>
-			</Loggers>
-	</Configuration>
-	'''
-	def template = engine.createTemplate(text).make(bindings)
-	println template.toString()
+                    if (values['type'] == 'Console') { 
+                        'Console'(name: name, target:'SYSTEM_OUT') {
+                            'PatternLayout'(pattern:values['pattern'])
+                        }
+                    } else if (values['type'] == 'RollingFile') {
+                        'RollingFile'(name:name, fileName:values['File'], filePattern:values['DatePattern']) {
+                            'PatternLayout'(pattern:values['pattern'])
+                        }
+                    }
+                }
+            }
+            'Loggers' {
+                bindings['loggers'].each { name, value ->
+                    Logger(name:name, level:value.trim())
+                }
+            }
+            'Root' (level:bindings['rootLevel']) {
+                AppenderRef (ref:bindings['rootAppender'].trim())
+            }
+        }
+    return xmlWriter.toString()
+
 }
