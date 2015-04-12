@@ -69,17 +69,17 @@ def generate(bindings) {
                             'PatternLayout'(pattern:values['pattern'])
                         }
                     } else if (values['type'] == 'DailyRollingFile') {
-                        'RollingFile'(name:name, fileName:values['File'], filePattern:values['DatePattern']) {
+                        'RollingFile'(name:name, fileName:values['File'], filePattern:"${fileName:values['File']}-%d{'+values['DatePattern']+'}") {
                             'PatternLayout'(pattern:values['pattern'])
                             'TimeBasedTriggeringPolicy' ()
                         }
                     } else if (values['type'] == 'RollingFile') {
-                        'RollingFile'(name:name, fileName:values['File'], filePattern:values['DatePattern']) {
+                        'RollingFile'(name:name, fileName:values['File']) {
                             'PatternLayout'(pattern:values['pattern'])
                             'Policies' {
                                 'SizeBasedTriggeringPolicy' (size: values['maxFileSize'])
-                                'DefaultRolloverStrategy' (max: values['maxBackupIndex'])
                             }
+                            'DefaultRolloverStrategy' (max: values['maxBackupIndex'])
                         }
                     }
                 }
