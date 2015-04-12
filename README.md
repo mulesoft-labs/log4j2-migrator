@@ -5,6 +5,10 @@ The objective is to migrate a log4j.properties to log4j2.xml configuration for s
 
 The script doesn't have any error checking whatsoever. The input should be valid and correct.
 
+No guarantee on output correction. Please review and test the generated configuration.
+
+Please report any issues at https://github.com/mulesoft-labs/log4j2-migrator/issues
+
 ## Usage
 groovy log4jmigrator.grovvy pathname-to-log4j.properties
 
@@ -18,5 +22,4 @@ groovy log4jmigrator.groovy test/log4j.properties > log4j2.xml
 ## Limitations
 * Can't translate multiple appenders for a logger
 * Only knows about ConsoleAppenders, RollingFileAppender and DailyRollingFileAppender (simple configuration) appenders 
-* Doesn't generate Async loggers
 * Doesn't understand log4j.xml as input
