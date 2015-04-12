@@ -17,6 +17,6 @@ groovy log4jmigrator.groovy test/log4j.properties > log4j2.xml
 
 ## Limitations
 * Can't translate multiple appenders for a logger
-* Only knows about ConsoleAppenders and DailyRollingFileAppender (simple configuration) appenders 
+* Only knows about ConsoleAppenders, RollingFileAppender and DailyRollingFileAppender (simple configuration) appenders 
 * Doesn't generate Async loggers
 * Doesn't understand log4j.xml as input

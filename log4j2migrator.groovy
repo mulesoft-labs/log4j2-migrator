@@ -32,6 +32,8 @@ def parse(properties) {
 				if (value == "org.apache.log4j.ConsoleAppender") {
 					appenders[name]['type']='Console'
 				} else if (value == "org.apache.log4j.DailyRollingFileAppender") {
+					appenders[name]['type']='DailyRollingFile'
+				} else if (value == "org.apache.log4j.RollingFileAppender") {
 					appenders[name]['type']='RollingFile'
 				}
 			} else {
@@ -66,9 +68,18 @@ def generate(bindings) {
                         'Console'(name: name, target:'SYSTEM_OUT') {
                             'PatternLayout'(pattern:values['pattern'])
                         }
+                    } else if (values['type'] == 'DailyRollingFile') {
+                        'RollingFile'(name:name, fileName:values['File'], filePattern:values['DatePattern']) {
+                            'PatternLayout'(pattern:values['pattern'])
+                            'TimeBasedTriggeringPolicy' ()
+                        }
                     } else if (values['type'] == 'RollingFile') {
                         'RollingFile'(name:name, fileName:values['File'], filePattern:values['DatePattern']) {
                             'PatternLayout'(pattern:values['pattern'])
+                            'Policies' {
+                                'SizeBasedTriggeringPolicy' (size: values['maxFileSize'])
+                                'DefaultRolloverStrategy' (max: values['maxBackupIndex'])
+                            }
                         }
                     }
                 }
