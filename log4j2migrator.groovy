@@ -46,9 +46,9 @@ def parse(properties) {
 			}
 		} else if (key.startsWith("log4j.logger")) {
 			def loggerName=key.substring("log4j.logger.".size())
-			loggers[loggerName]=value
-			
-		} else if (key.startsWith("log4j.rootCategory")) {
+			loggers[loggerName]=value.tokenize( ',' )
+
+		} else if (key.startsWith("log4j.rootCategory") || key.startsWith("log4j.rootLogger")) {
 			def rootCategories = value.tokenize( ',' )
             rootLevel = rootCategories[0]
             rootAppenders = rootCategories[1..-1]
