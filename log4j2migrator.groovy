@@ -76,12 +76,12 @@ def generate(bindings) {
                             'TimeBasedTriggeringPolicy' ()
                         }                        
                     } else if (values['type'] == 'RollingFile') {
-                        'RollingFile'(name:name, fileName:values['File']) {
+                        'RollingFile'(name:name, fileName:values['File'], filePattern:"${fileName:values['File']}.%i") {
                             'PatternLayout'(pattern:values['pattern'])
                             'Policies' {
-                                'SizeBasedTriggeringPolicy' (size: values['maxFileSize'])
+                                'SizeBasedTriggeringPolicy' (size: values['MaxFileSize'])
                             }
-                            'DefaultRolloverStrategy' (max: values['maxBackupIndex'])
+                            'DefaultRolloverStrategy' (max: values['MaxBackupIndex'])
                         }
                     }
                 }
