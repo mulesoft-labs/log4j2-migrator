@@ -90,9 +90,9 @@ def generate(bindings) {
                 bindings['loggers'].each { name, value ->
                     'AsyncLogger' (name:name, level:value.trim())
                 }
-            }
-            'AsyncRoot' (level:bindings['rootLevel']) {
-                AppenderRef (ref:bindings['rootAppender'].trim())
+                'AsyncRoot' (level:bindings['rootLevel']) {
+                    AppenderRef (ref:bindings['rootAppender'].trim())
+                }
             }
         }
     return xmlWriter.toString()
