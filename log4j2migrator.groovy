@@ -18,10 +18,12 @@ def parse(properties) {
 	def appenders=[:]
 	def loggers=[:]
 	def rootLevel
-	def rootAppender
+	def rootAppenders
 
 	properties.each { key, value ->
-		//println "property ${key}=${value}"
+        value=value.trim()
+		//println "property ${key}=[${value}]"
+
 		if (key.startsWith("log4j.appender")) {
 			def (log4j, appender, name, property,extra)=key.tokenize('.')
 			//println "log4j=${log4j}, appender=${appender}, name=${name}, property=${property}, extra=${extra}, value=${value}"
@@ -47,12 +49,14 @@ def parse(properties) {
 			loggers[loggerName]=value
 			
 		} else if (key.startsWith("log4j.rootCategory")) {
-			(rootLevel, rootAppender) = value.tokenize( ',' )
+			def rootCategories = value.tokenize( ',' )
+            rootLevel = rootCategories[0]
+            rootAppenders = rootCategories[1..-1]
 		}
 	}
 	
-    def values = ['rootLevel': rootLevel, 'rootAppender':rootAppender, 'appenders': appenders, 'loggers': loggers]
-	//println "values=${values}"
+    def values = ['rootLevel': rootLevel, 'rootAppenders':rootAppenders, 'appenders': appenders, 'loggers': loggers]
+
 	return values
 }
 
@@ -91,7 +95,9 @@ def generate(bindings) {
                     'AsyncLogger' (name:name, level:value.trim())
                 }
                 'AsyncRoot' (level:bindings['rootLevel']) {
-                    AppenderRef (ref:bindings['rootAppender'].trim())
+                    bindings['rootAppenders'].each { name ->
+                        AppenderRef (ref:name.trim())
+                    }
                 }
             }
         }
