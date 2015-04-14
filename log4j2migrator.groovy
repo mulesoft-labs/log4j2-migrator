@@ -64,6 +64,7 @@ def generate(bindings) {
     def xmlWriter = new StringWriter() 
     def xmlMarkup = new groovy.xml.MarkupBuilder(xmlWriter)
     xmlMarkup.setOmitNullAttributes(true)
+    xmlMarkup.setDoubleQuotes(true)
     xmlMarkup.mkp.xmlDeclaration(version: "1.0", encoding: "utf-8")
     xmlMarkup
         .'Configuration' {
