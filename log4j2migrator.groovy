@@ -77,7 +77,9 @@ def parse(properties) {
 					appenders[name]['type']='DailyRollingFile'
 				} else if (value == "org.apache.log4j.RollingFileAppender") {
 					appenders[name]['type']='RollingFile'
-				}
+				} else {
+                    System.err.println "WARNING: unknown appender type ${value} ignored!"
+                }
 			} else {
 				appenders[name][property]=value
 			}
