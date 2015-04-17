@@ -1,7 +1,36 @@
 
 
+def outputFile
+
+def cli = new CliBuilder(usage: 'log4j2-migrator [options] input-file')
+cli.with {
+    h(longOpt: 'help'  , 'usage information'   , required: false )
+    o(longOpt: 'output', 'file to write the output', required: false  , args: 1 )
+    d(longOpt: 'debug', 'print debug information', required: false  )
+}
+
+OptionAccessor opt = cli.parse(args)
+if(!opt) {
+    return
+}
+
+// print usage if -h or --help
+if(opt.h || opt.arguments().size() != 1) {
+    cli.usage()
+    return
+}
+
+if( opt.o ) {
+    outputFile = opt.o
+} 
+
+def extraArguments = opt.arguments()
+if (extraArguments) {
+    inputFile = extraArguments[0]
+}
+
 Properties properties = new Properties()
-File propertiesFile = new File(args[0])
+File propertiesFile = new File(inputFile)
 propertiesFile.withInputStream {
     properties.load(it)
 }
@@ -10,7 +39,14 @@ propertiesFile.withInputStream {
 def bindings = parse(properties)
 //println "Bindings = ${bindings}"
 
-println generate(bindings)
+def output=generate(bindings)
+
+if (outputFile) {
+    new File(outputFile).write(output)
+} else {
+    println output
+}
+
 
 
 def parse(properties) {
