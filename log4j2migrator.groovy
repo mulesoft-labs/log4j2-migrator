@@ -1,7 +1,4 @@
 
-
-def outputFile
-
 def cli = new CliBuilder(usage: 'log4j2-migrator [options] input-file')
 cli.with {
     h(longOpt: 'help'  , 'usage information'   , required: false )
@@ -14,14 +11,20 @@ if(!opt) {
     return
 }
 
-// print usage if -h or --help
+// print usage if -h or --help or number of arguments incorrect
 if(opt.h || opt.arguments().size() != 1) {
     cli.usage()
     return
 }
 
+def outputFile
 if( opt.o ) {
     outputFile = opt.o
+} 
+
+@groovy.transform.Field def debug // global print debug information flag
+if( opt.d ) {
+    debug = opt.d
 } 
 
 def extraArguments = opt.arguments()
@@ -37,7 +40,8 @@ propertiesFile.withInputStream {
 
 
 def bindings = parse(properties)
-//println "Bindings = ${bindings}"
+
+if (debug) { System.err.println "Bindings = ${bindings}" }
 
 def output=generate(bindings)
 
@@ -58,11 +62,11 @@ def parse(properties) {
 
 	properties.each { key, value ->
         value=value.trim()
-		//println "property ${key}=[${value}]"
+		if (debug) { System.err.println "property ${key}=[${value}]" }
 
 		if (key.startsWith("log4j.appender")) {
 			def (log4j, appender, name, property,extra)=key.tokenize('.')
-			//println "log4j=${log4j}, appender=${appender}, name=${name}, property=${property}, extra=${extra}, value=${value}"
+			if (debug) { System.err.println  "log4j=${log4j}, appender=${appender}, name=${name}, property=${property}, extra=${extra}, value=${value}" }
 			if (!appenders.containsKey(name)) {
 				appenders[name] = [:]
 			}
