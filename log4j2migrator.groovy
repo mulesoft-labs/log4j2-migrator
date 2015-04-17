@@ -66,7 +66,7 @@ def parse(properties) {
 
 		if (key.startsWith("log4j.appender")) {
 			def (log4j, appender, name, property,extra)=key.tokenize('.')
-			if (debug) { System.err.println  "log4j=${log4j}, appender=${appender}, name=${name}, property=${property}, extra=${extra}, value=${value}" }
+			if (debug) { System.err.println "log4j=${log4j}, appender=${appender}, name=${name}, property=${property}, extra=${extra}, value=${value}" }
 			if (!appenders.containsKey(name)) {
 				appenders[name] = [:]
 			}
@@ -92,7 +92,9 @@ def parse(properties) {
 			def rootCategories = value.tokenize( ',' )
             rootLevel = rootCategories[0]
             rootAppenders = rootCategories[1..-1]
-		}
+		} else {
+            System.err.println "WARNING: unknown property ${key} ignored!"
+        }
 	}
 	
     def values = ['rootLevel': rootLevel, 'rootAppenders':rootAppenders, 'appenders': appenders, 'loggers': loggers]
