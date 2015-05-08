@@ -12,6 +12,12 @@ Please report any issues at https://github.com/mulesoft-labs/log4j2-migrator/iss
 ## Usage
 groovy log4jmigrator.grovvy pathname-to-log4j.properties
 
+### Options
+
+ -d,--debug          print debug information
+ -h,--help           usage information
+ -o,--output <arg>   file to write the output
+
 ## Example
 
 ```
