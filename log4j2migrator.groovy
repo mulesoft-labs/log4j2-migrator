@@ -115,8 +115,10 @@ def generate(bindings) {
             'Appenders' {
                 bindings['appenders'].each { name, values -> 
 
-                    if (values['type'] == 'Console') { 
-                        'Console'(name: name, target:'SYSTEM_OUT') {
+                    if (values['type'] == 'Console') {
+                        def target = 'SYSTEM_OUT' 
+                        if (values['target'] == 'System.err') { target = 'SYSTEM_ERR' }
+                        'Console'(name: name, target:target) {
                             'PatternLayout'(pattern:values['pattern'])
                         }
                     } else if (values['type'] == 'DailyRollingFile') {
