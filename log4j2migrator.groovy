@@ -1,4 +1,3 @@
-
 def cli = new CliBuilder(usage: 'log4j2-migrator [options] input-file')
 cli.with {
     h(longOpt: 'help'  , 'usage information'   , required: false )
@@ -57,6 +56,7 @@ def parse(properties) {
 
 	def appenders=[:]
 	def loggers=[:]
+    def additivities=[:]
 	def rootLevel
 	def rootAppenders
 
@@ -86,10 +86,15 @@ def parse(properties) {
 			if (extra != null) {
 				appenders[name]['pattern']=value
 			}
-		} else if (key.startsWith("log4j.logger")) {
-			def loggerName=key.substring("log4j.logger.".size())
-			loggers[loggerName]=value.tokenize( ',' )
-
+		} else if (key.startsWith("log4j.logger.")) {
+            def loggerName = key.substring("log4j.logger.".size())
+            loggers[loggerName] = value.tokenize(',')
+        } else if (key.startsWith("log4j.category.")) {
+            def loggerName = key.substring("log4j.category.".size())
+            loggers[loggerName] = value.tokenize(',')
+        } else if (key.startsWith("log4j.additivity.")) {
+            def loggerName = key.substring("log4j.additivity.".size())
+            additivities[loggerName] = value
 		} else if (key.startsWith("log4j.rootCategory") || key.startsWith("log4j.rootLogger")) {
 			def rootCategories = value.tokenize( ',' )
             rootLevel = rootCategories[0]
@@ -99,7 +104,8 @@ def parse(properties) {
         }
 	}
 	
-    def values = ['rootLevel': rootLevel, 'rootAppenders':rootAppenders, 'appenders': appenders, 'loggers': loggers]
+    def values = ['rootLevel': rootLevel, 'rootAppenders':rootAppenders, 'appenders': appenders,
+                  'loggers': loggers, 'additivities': additivities]
 
 	return values
 }
@@ -136,9 +142,10 @@ def generate(bindings) {
                     }
                 }
             }
+            def additivites = bindings['additivities']
             'Loggers' {
                 bindings['loggers'].each { name, value ->
-                    'AsyncLogger' (name:name, level:value[0].trim()) {
+                    'AsyncLogger' (name:name, level:value[0].trim(), additivity: additivites[name] ?: 'false') {
                         if (value.size() > 1) {
                             def loggerAppenders = value[1..-1]
                             loggerAppenders.each {
