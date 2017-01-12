@@ -57,6 +57,7 @@ def parse(properties) {
 
 	def appenders=[:]
 	def loggers=[:]
+	def additivity=[:]
 	def rootLevel
 	def rootAppenders
 
@@ -94,12 +95,15 @@ def parse(properties) {
 			def rootCategories = value.tokenize( ',' )
             rootLevel = rootCategories[0]
             rootAppenders = rootCategories[1..-1]
+		} else if (key.startsWith("log4j.additivity")) {
+			def loggerName=key.substring("log4j.additivity.".size())
+			additivity[loggerName]=value
 		} else {
             System.err.println "WARNING: unknown property ${key} ignored!"
         }
 	}
 	
-    def values = ['rootLevel': rootLevel, 'rootAppenders':rootAppenders, 'appenders': appenders, 'loggers': loggers]
+	def values = ['rootLevel': rootLevel, 'rootAppenders':rootAppenders, 'appenders': appenders, 'loggers': loggers, 'additivity': additivity]
 
 	return values
 }
@@ -138,7 +142,7 @@ def generate(bindings) {
             }
             'Loggers' {
                 bindings['loggers'].each { name, value ->
-                    'AsyncLogger' (name:name, level:value[0].trim()) {
+                    'AsyncLogger' (name:name, level:value[0].trim(), additivity: bindings['additivity'][name]) {
                         if (value.size() > 1) {
                             def loggerAppenders = value[1..-1]
                             loggerAppenders.each {
