@@ -93,7 +93,7 @@ def parse(properties) {
 		} else if (key.startsWith("log4j.rootCategory") || key.startsWith("log4j.rootLogger")) {
 			def rootCategories = value.tokenize( ',' )
             rootLevel = rootCategories[0]
-            rootAppenders = rootCategories[1..-1]
+            rootAppenders = rootCategories.size() > 1 ? rootCategories[1..-1] : []
 		} else {
             System.err.println "WARNING: unknown property ${key} ignored!"
         }
