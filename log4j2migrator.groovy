@@ -4,6 +4,7 @@ cli.with {
     h(longOpt: 'help'  , 'usage information'   , required: false )
     o(longOpt: 'output', 'file to write the output', required: false  , args: 1 )
     d(longOpt: 'debug', 'print debug information', required: false  )
+    i(longOpt: 'interpolate', 'substitue parameters', required: false )
 }
 
 OptionAccessor opt = cli.parse(args)
@@ -26,6 +27,11 @@ if( opt.o ) {
 if( opt.d ) {
     debug = opt.d
 } 
+
+@groovy.transform.Field def interpolate
+if ( opt.i ) {
+  interpolate = opt.i
+}
 
 def extraArguments = opt.arguments()
 if (extraArguments) {
@@ -60,8 +66,14 @@ def parse(properties) {
 	def rootLevel
 	def rootAppenders
 
+        def params=[:]
+
 	properties.each { key, value ->
         value=value.trim()
+                if ( interpolate ) {
+                    value = value.replaceAll(/\$\{(.*?)\}/) { m, k -> params[k] }
+                    params[key]=value
+                }
 		if (debug) { System.err.println "property ${key}=[${value}]" }
 
 		if (key.startsWith("log4j.appender")) {
