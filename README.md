@@ -21,7 +21,7 @@ groovy log4jmigrator.grovvy pathname-to-log4j.properties
 ## Example
 
 ```
-groovy log4jmigrator.groovy test/log4j.properties > log4j2.xml
+groovy log4j2migrator.groovy test/log4j.properties > log4j2.xml
 
 ```
 
